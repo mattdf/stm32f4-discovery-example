@@ -40,7 +40,7 @@ OBJCOPY		= $(PREFIX)-objcopy
 OBJDUMP		= $(PREFIX)-objdump
 GDB		= $(PREFIX)-gdb
 
-CFLAGS		+= -O0 s -g -Wall -Wextra -I$(LIBOPENCM3_DIR)/include \
+CFLAGS		+= -O0 -g -Wall -Wextra -I$(LIBOPENCM3_DIR)/include \
 		 -Wimplicit-function-declaration -Wundef -Wshadow \
 		 -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
 		 -fno-common -ffunction-sections -fdata-sections \
