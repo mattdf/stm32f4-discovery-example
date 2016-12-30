@@ -109,7 +109,7 @@ static usbd_device *setup_usb(uint8_t *usbd_control_buffer, size_t buf_len)
 {
 	usbd_device *usbd_dev;
 
-	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE,
 			GPIO9 | GPIO11 | GPIO12);
 	gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
 
