@@ -73,7 +73,7 @@ static void cdcacm_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 	}
 
 	/* flash the LEDs so we know we're doing something */
-	gpio_toggle(GPIOD, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+	gpio_toggle(GPIOC, GPIO12);
 }
 
 static void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue)
@@ -95,11 +95,12 @@ static void cdcacm_set_config(usbd_device *usbd_dev, uint16_t wValue)
 
 static void setup_main_clock(void)
 {
-	rcc_clock_setup_hse_3v3(&hse_8mhz_3v3[CLOCK_3V3_168MHZ]);
+	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
 }
 
 static void setup_peripheral_clocks(void)
 {
+	rcc_periph_clock_enable(RCC_GPIOC);
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_OTGFS);
 }
@@ -121,10 +122,13 @@ static usbd_device *setup_usb(uint8_t *usbd_control_buffer, size_t buf_len)
 static void setup_leds(void)
 {
 	/* enable the four LEDs */
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-			GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT,
+			GPIO_PUPD_NONE, GPIO12);
 	/* Set two LEDs for wigwag effect when toggling. */
-	gpio_set(GPIOD, GPIO12 | GPIO14);
+	gpio_set(GPIOC, GPIO12);
+	gpio_toggle(GPIOC, GPIO12);
+	gpio_toggle(GPIOC, GPIO12);
+	gpio_toggle(GPIOC, GPIO12);
 }
 
 int main(void)
@@ -138,6 +142,8 @@ int main(void)
 	setup_leds();
 
 	while (1) {
+		for (int i = 0; i < 16777216; i++);
+		gpio_toggle(GPIOC, GPIO12);
 		usbd_poll(usbd_dev);
 	}
 }
