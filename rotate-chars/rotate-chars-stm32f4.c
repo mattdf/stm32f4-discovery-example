@@ -109,9 +109,11 @@ static usbd_device *setup_usb(uint8_t *usbd_control_buffer, size_t buf_len)
 {
 	usbd_device *usbd_dev;
 
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE,
+	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 			GPIO9 | GPIO11 | GPIO12);
 	gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
+
+
 
 	usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config,
 			     usb_strings, 3, usbd_control_buffer, buf_len);
@@ -124,10 +126,11 @@ static void setup_leds(void)
 	/* enable the four LEDs */
 	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT,
 			GPIO_PUPD_NONE, GPIO12);
+
+	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO11);
+	gpio_clear(GPIOC, GPIO11);
 	/* Set two LEDs for wigwag effect when toggling. */
 	gpio_set(GPIOC, GPIO12);
-	gpio_toggle(GPIOC, GPIO12);
-	gpio_toggle(GPIOC, GPIO12);
 	gpio_toggle(GPIOC, GPIO12);
 }
 
@@ -138,12 +141,12 @@ int main(void)
 
 	setup_main_clock();
 	setup_peripheral_clocks();
-	usbd_dev = setup_usb(usbd_control_buffer, 128);
 	setup_leds();
+	usbd_dev = setup_usb(usbd_control_buffer, 128);
 
 	while (1) {
-		//for (int i = 0; i < 16777216; i++);
-		//gpio_toggle(GPIOC, GPIO12);
+///		for (int i = 0; i < 16777216; i++);
+///		gpio_toggle(GPIOC, GPIO12);
 		usbd_poll(usbd_dev);
 	}
 }
