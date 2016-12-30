@@ -143,7 +143,7 @@ int main(void)
 
 	while (1) {
 		for (int i = 0; i < 16777216; i++);
-		gpio_toggle(GPIOC, GPIO12);
+		//gpio_toggle(GPIOC, GPIO12);
 		usbd_poll(usbd_dev);
 	}
 }
