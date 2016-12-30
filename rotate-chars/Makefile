@@ -29,10 +29,8 @@ BINARY = rotate-chars-stm32f4
 # Uncomment this line if you want to use the installed (not local) library.
 #TOOLCHAIN_DIR := $(shell dirname `which $(CC)`)/../$(PREFIX)
 #LIBOPENCM3_DIR   = $(TOOLCHAIN_DIR)
-LIBOPENCM3_DIR   = ../../libopencm3
-LIBOPENCM3_EXAMPLES_DIR = ../../libopencm3-examples
-#LDSCRIPT = ../stm32f4-discovery.ld
-LDSCRIPT = $(LIBOPENCM3_EXAMPLES_DIR)/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+LIBOPENCM3_DIR   = ./libopencm3
+LDSCRIPT = ./stm32f4-discovery.ld
 
 PREFIX	?= arm-none-eabi
 # PREFIX		?= arm-elf
@@ -76,25 +74,25 @@ flash: $(BINARY).flash
 
 rotate-chars-stm32f.o: rotate-chars-stm32f4.c rotate-chars-usb-descriptors.h
 
-%.images: %.bin %.hex %.srec %.list
+$(BINARY).images: $(BINARY).bin $(BINARY).hex $(BINARY).srec $(BINARY).list
 	@echo "Success."
 
-%.bin: %.elf
+$(BINARY).bin: $(BINARY).elf
 	$(OBJCOPY) -Obinary $(*).elf $(*).bin
 
-%.hex: %.elf
+$(BINARY).hex: $(BINARY).elf
 	$(OBJCOPY) -Oihex $(*).elf $(*).hex
 
-%.srec: %.elf
+$(BINARY).srec: $(BINARY).elf
 	$(OBJCOPY) -Osrec $(*).elf $(*).srec
 
-%.list: %.elf
+$(BINARY).list: $(BINARY).elf
 	$(OBJDUMP) -S $(*).elf > $(*).list
 
-%.elf: $(OBJS) $(LDSCRIPT) $(LIBOPENCM3_DIR)/lib/stm32/f4/libopencm3_stm32f4.a
+$(BINARY).elf: $(OBJS) $(LDSCRIPT) $(LIBOPENCM3_DIR)/lib/stm32/f4/libopencm3_stm32f4.a
 	$(LD) -o $(*).elf $(OBJS) -lopencm3_stm32f4 $(LDFLAGS)
 
-%.o: %.c Makefile
+$(BINARY).o: $(BINARY).c Makefile
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(LIBOPENCM3_DIR)/lib/stm32/f4/libopencm3_stm32f4.a : $(LIBOPENCM3_DIR)/Makefile
@@ -125,7 +123,7 @@ clean:
 	rm -f *.o *.d *.elf *.bin *.hex *.srec *.list
 	$(MAKE) -C $(LIBOPENCM3_DIR) clean
 
-%.flash: %.bin
+$(BINARY).flash: $(BINARY).bin
 	st-flash write $< 0x8000000
 
 .PHONY: images clean
